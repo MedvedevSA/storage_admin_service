@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import delete, insert, select, update
 
 from database import Base, async_session
-from models import StorageItems
+from models import StorageItems, Categories
 from select_generator import Dump, SelectGenerator
 
 logger = logging.getLogger("uvicorn")
@@ -88,3 +88,7 @@ class SQLAlchemyRepository:
 
 class StorageItemsRepository(SQLAlchemyRepository):
     model = StorageItems
+
+
+class CategoriesRepository(SQLAlchemyRepository):
+    model = Categories

@@ -9,10 +9,10 @@ from database import Base, engine
 class StorageItemsCategories(Base):
     __tablename__ = "storageitems_categories"
     storage_item_id: Mapped[int] = mapped_column(
-        ForeignKey("storage_items.id"), primary_key=True
+        ForeignKey("storage_items.id", ondelete='CASCADE'), primary_key=True
     )
     category_id: Mapped[int] = mapped_column(
-        ForeignKey("categories.id"), primary_key=True
+        ForeignKey("categories.id", ondelete='CASCADE'), primary_key=True
     )
 
 
@@ -39,7 +39,9 @@ class Categories(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
-    parent_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=True)
+    parent_id: Mapped[int] = mapped_column(
+        ForeignKey("categories.id"), nullable=True
+    )
 
     time_created: Mapped[datetime] = mapped_column(
         TIMESTAMP, default=func.now()

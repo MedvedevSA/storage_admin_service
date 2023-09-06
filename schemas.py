@@ -27,9 +27,14 @@ class AddCategory(BaseModel):
     parent_id: None | int
 
 
+class UpdCategory(AddCategory):
+    ...
+
+
 class Category(AddCategory):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     time_created: datetime
     time_updated: datetime
 

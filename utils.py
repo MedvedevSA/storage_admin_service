@@ -22,7 +22,7 @@ def module_url(name: str):
 
 def include_module_route(app: FastAPI, module_path: Path):
     def path_to_import_str(path: Path) -> str:
-        return str(path).rstrip('.py').replace('/', '.')
+        return str(path).removesuffix('.py').replace('/', '.')
 
     router_module = import_module(
         path_to_import_str(module_path)
