@@ -24,6 +24,10 @@ class AddStorageItem(BaseModel):
     name: str
 
 
+class UpdStorageItem(AddStorageItem):
+    ...
+
+
 class StorageItem(AddStorageItem):
     id: int
     time_created: datetime

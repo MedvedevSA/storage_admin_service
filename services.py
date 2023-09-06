@@ -42,7 +42,7 @@ class BaseService:
                 if v not in [None, []]
             }
         rows = await self.repository.get_all(params, relations)
-        return [response_model.model_validate(row) for row in rows]
+        return [response_model.model_validate(row, from_attributes=True) for row in rows]
 
     async def update_one(self, id: int, obj: Model) -> int:
         return await self.repository.update_one(

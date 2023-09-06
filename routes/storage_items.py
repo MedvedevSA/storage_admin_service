@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from repositories import StorageItemsRepository
-from schemas import AddStorageItem
+from schemas import AddStorageItem, UpdStorageItem, StorageItem
 from services import BaseService
 from utils import module_url
 
@@ -25,3 +25,34 @@ async def add_storage_item(
 ) -> int | None:
     return await storage_items_srvc.add_one(item)
 
+
+@r.get(BASE)
+async def get_storage_items(
+    storage_items_srvc: ServiceDepends
+) -> list[StorageItem]:
+    return await storage_items_srvc.get_all(response_model=StorageItem)
+
+
+@r.get(BASE + '/{id: int}')
+async def get_storage_item(
+    id: int,
+    storage_items_srvc: ServiceDepends
+) -> list[StorageItem]:
+    return await storage_items_srvc.get_one(id, response_model=StorageItem)
+
+
+@r.put(BASE + '/{id: int}')
+async def update_storage_item(
+    id: int,
+    upd_item: UpdStorageItem,
+    storage_items_srvc: ServiceDepends
+) -> int:
+    return await storage_items_srvc.update_one(id, upd_item)
+
+
+@r.delete(BASE + '/{id: int}')
+async def delete_storage_item(
+    id: int,
+    storage_items_srvc: ServiceDepends
+) -> int:
+    return await storage_items_srvc.del_one(id)
