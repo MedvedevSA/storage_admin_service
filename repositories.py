@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from sqlalchemy import delete, insert, select, update
@@ -6,9 +7,48 @@ from database import Base, async_session
 from models import StorageItems
 from select_generator import Dump, SelectGenerator
 
+logger = logging.getLogger("uvicorn")
+
 
 class SQLAlchemyRepository:
     model: Base
+
+    async def add_one_m2m(
+        self,
+        parent_data: dict,
+        relations: list[dict[str, dict]]
+    ):
+        async with async_session() as session:
+            parent = self.model(**parent_data)
+            session.add(parent)
+            for relation in relations:
+                for relation_fld, data in relation.items():
+                    try:
+                        col = getattr(parent, relation_fld)
+                        assert isinstance(col, list)
+                        annotated: dict = data['meta']
+                        
+                        for child in data['children']:
+                            child = annotated['model'](**child)
+                            session.add(child)
+                            await session.commit()
+                            session.add(
+                                annotated['associate'](
+                                    **{
+                                        annotated['parent_fk']: parent.id,
+                                        annotated['child_fk']: child.id,
+                                    }
+                                )
+                            )
+                    except KeyError:
+                        logger.error('m2m key err')
+                    except AttributeError:
+                        logger.error('m2m attr err')
+                    except AssertionError:
+                        logger.error('m2m unexpected type err')
+
+            await session.commit()
+            return parent.id
 
     async def add_one(self, data: dict):
         async with async_session() as session:

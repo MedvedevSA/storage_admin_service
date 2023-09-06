@@ -13,6 +13,19 @@ class BaseService:
     def __init__(self, repository: type[SQLAlchemyRepository]):
         self.repository = repository()
 
+    async def add_one_m2m(self, obj: Model) -> int:
+        parent = obj.model_dump(exclude_unset=True)
+        relations = list()
+        for fld, info in type(obj).model_fields.items():
+            if info.metadata:
+                relations.append({fld: {
+                        'meta': info.metadata[0],
+                        'children': parent.pop(fld),
+                    }
+                })
+
+        return await self.repository.add_one_m2m(parent, relations)
+
     async def add_one(self, obj: Model) -> int:
         return await self.repository.add_one(
             obj.model_dump(exclude_unset=True)

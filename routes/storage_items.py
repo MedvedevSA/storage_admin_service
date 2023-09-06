@@ -23,7 +23,7 @@ async def add_storage_item(
     item: AddStorageItem,
     storage_items_srvc: ServiceDepends
 ) -> int | None:
-    return await storage_items_srvc.add_one(item)
+    return await storage_items_srvc.add_one_m2m(item)
 
 
 @r.get(BASE)
