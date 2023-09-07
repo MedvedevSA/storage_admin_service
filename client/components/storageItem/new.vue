@@ -3,13 +3,14 @@
     <div class="column q-gutter-md">
         <div class="row justify-between q-gutter-sm">
             <p class="col-auto text-h6">
-                Создать категорию:
+                Добавить предмет:
             </p>
             <div class="col">
                 <q-btn size="md" class="align-right" v-close-popup icon="close" />
             </div>
         </div>
-      <q-input filled v-model="category.name" placeholder="Название категории"/>
+      <q-input filled v-model="storageItem.name" placeholder="Название прeдмета"/>
+        <CategoryList v-model="storageItem.categories"/>
       <q-btn icon="save" @click="saveNew" :class="edited"/>
     </div>
   </q-card>
@@ -17,16 +18,17 @@
 
 <script setup>
 import { apiFetch } from "~/utils/apiFetch";
-const category = ref({
+const selectedCategories = ref([])
+const storageItem = ref({
   name: '',
-  parent_id: null
+  categories: []
 });
 const edited = ref('bg-white')
 
 function saveNew() {
-  apiFetch("/category", {
+  apiFetch("/storage_items", {
     method: "POST",
-    body: JSON.stringify(category.value)
+    body: JSON.stringify(storageItem.value)
   })
     .then((response) => {
         response.json()

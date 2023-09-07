@@ -23,7 +23,8 @@
       >
         <q-checkbox
           class="col"
-          v-model="category.chBox"
+          v-model="selectedCategories"
+          :val="category.id"
           :label="category.name"
         />
         <q-btn-dropdown>
@@ -52,6 +53,7 @@
 
 <script setup>
 import { apiFetch } from "~/utils/apiFetch";
+
 const categories = ref([]);
 const editCategory = ref(null);
 
@@ -65,6 +67,19 @@ const editClicked = computed({
     editCategory.value = null;
   },
 });
+
+const props = defineProps(['modelValue'])
+const emit = defineEmits(['update:modelValue'])
+
+const selectedCategories = computed({
+  get() {
+    return props.modelValue 
+  },
+  set(value) {
+    emit('update:modelValue', value)
+  }
+})
+
 
 function deleteCategory(id) {
   apiFetch("/category/" + id, {
@@ -81,7 +96,6 @@ function loadCategories() {
   apiFetch("/category").then((response) => {
     response.json().then((data) => {
       categories.value = data;
-      categories.value.forEach((el) => (el.chBox = false));
     });
   });
 }
