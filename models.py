@@ -1,8 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, func, ForeignKey, select
+from sqlalchemy import TIMESTAMP, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.exc import ProgrammingError
 
 from database import Base, engine
 
@@ -24,10 +23,10 @@ class StorageItems(Base):
     name: Mapped[str]
 
     time_created: Mapped[datetime] = mapped_column(
-        TIMESTAMP, default=func.now()
+        TIMESTAMP, default=datetime.now
     )
     time_updated: Mapped[datetime] = mapped_column(
-        TIMESTAMP, default=func.now(), onupdate=func.now()
+        TIMESTAMP, default=datetime.now, onupdate=datetime.now
     )
     categories: Mapped[list["StorageItemsCategories"]] = relationship(
         "Categories", secondary="storageitems_categories",
@@ -45,10 +44,10 @@ class Categories(Base):
     )
 
     time_created: Mapped[datetime] = mapped_column(
-        TIMESTAMP, default=func.now()
+        TIMESTAMP, default=datetime.now
     )
     time_updated: Mapped[datetime] = mapped_column(
-        TIMESTAMP, default=func.now(), onupdate=func.now()
+        TIMESTAMP, default=datetime.now, onupdate=datetime.now
     )
     storage_items: Mapped[list["StorageItemsCategories"]] = relationship(
         "StorageItems", secondary="storageitems_categories",
@@ -56,12 +55,15 @@ class Categories(Base):
     )
 
 
+class JournalLog(Base):
+    __tablename__ = "journal_log"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    client_ip: Mapped[str]
+    data: Mapped[dict] = mapped_column(JSON)
+    time_created: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.now)
+
+
 async def chech_or_init_db(clean_db=False):
     async with engine.begin() as conn:
-        if clean_db:
-            await conn.run_sync(Base.metadata.drop_all)
-        try:
-            await conn.execute(select(Categories).limit(1))
-        except ProgrammingError:
-            await conn.run_sync(Base.metadata.create_all)
-
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)

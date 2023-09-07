@@ -49,7 +49,7 @@ async def update_storage_item(
     id: int,
     upd_item: UpdStorageItem,
     storage_items_srvc: ServiceDepends
-) -> int:
+) -> int | None:
     return await storage_items_srvc.update_one(id, upd_item)
 
 

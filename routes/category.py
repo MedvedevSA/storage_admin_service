@@ -46,7 +46,7 @@ async def update_category(
     id: int,
     upd_category: UpdCategory,
     category_srvc: ServiceDepends
-) -> int:
+) -> int | None:
     return await category_srvc.update_one(id, upd_category)
 
 

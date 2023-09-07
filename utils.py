@@ -1,15 +1,10 @@
 from importlib import import_module
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
+from journal_depends import journal_depends
 
-def create_routes(app: FastAPI, *modules):
-    for m in modules:
-        app.include_router(
-            getattr(m, 'r'),
-            tags=[short_module_name(m.__name__)],
-        )
 
 
 def short_module_name(name: str):
@@ -32,6 +27,7 @@ def include_module_route(app: FastAPI, module_path: Path):
             router_module.r,
             prefix='',
             tags=[short_module_name(router_module.__name__)],
+            dependencies=[Depends(journal_depends)]
         )
 
 

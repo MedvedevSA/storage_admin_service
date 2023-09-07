@@ -66,3 +66,10 @@ class StorageItemFilter(BaseModel):
     })
 
     category__id__in: list[int] | None = Field(Query(default=[]))
+
+
+class JournalLog(BaseModel):
+    id: int
+    client_ip: str
+    data: dict
+    time_created: datetime
