@@ -10,8 +10,8 @@ from models import init_models
 from utils import include_routes
 
 app = FastAPI()
+include_routes(app)
 
-build_path = Path(__file__).parent / 'client' / 'dist' 
 origins = [
     "*",
 ]
@@ -25,22 +25,11 @@ app.add_middleware(
 )
 
 
-@app.get('/{file}')
-async def catch_dir(req: Request, file: str):
-    if not Path(build_path / file).exists():
-        file = 'index.html'
-    return FileResponse(build_path / file)
-
-
-@app.route('/{full_path:path}')
-async def catch_all(req: Request):
-    return FileResponse(build_path / 'index.html')
 
 
 @app.on_event('startup')
 async def startup_event():
     await init_models()
-    include_routes(app)
 
 if __name__ == '__main__':
     uvicorn.run(

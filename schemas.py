@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Literal
 
 from fastapi import Query
-from pydantic import BaseModel, computed_field, ConfigDict
+from pydantic import BaseModel, computed_field, ConfigDict, Field
 from models import Categories, StorageItemsCategories
 
 
@@ -24,7 +24,7 @@ class PagingModel(BaseModel):
 
 class AddCategory(BaseModel):
     name: str
-    parent_id: None | int
+    parent_id: None | int = Field(gt=0)
 
 
 class UpdCategory(AddCategory):

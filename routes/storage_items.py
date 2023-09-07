@@ -33,7 +33,7 @@ async def get_storage_items(
     return await storage_items_srvc.get_all(response_model=StorageItem)
 
 
-@r.get(BASE + '/{id: int}')
+@r.get(BASE + '/{id}')
 async def get_storage_item(
     id: int,
     storage_items_srvc: ServiceDepends
@@ -41,7 +41,7 @@ async def get_storage_item(
     return await storage_items_srvc.get_one(id, response_model=StorageItem)
 
 
-@r.put(BASE + '/{id: int}')
+@r.put(BASE + '/{id}')
 async def update_storage_item(
     id: int,
     upd_item: UpdStorageItem,
@@ -50,7 +50,7 @@ async def update_storage_item(
     return await storage_items_srvc.update_one(id, upd_item)
 
 
-@r.delete(BASE + '/{id: int}')
+@r.delete(BASE + '/{id}')
 async def delete_storage_item(
     id: int,
     storage_items_srvc: ServiceDepends

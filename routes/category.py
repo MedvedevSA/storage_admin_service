@@ -33,7 +33,7 @@ async def get_categories(
     return await category_srvc.get_all(response_model=Category)
 
 
-@r.get(BASE + '/{id: int}')
+@r.get(BASE + '/{id}')
 async def get_category(
     id: int,
     category_srvc: ServiceDepends
@@ -41,7 +41,7 @@ async def get_category(
     return await category_srvc.get_one(id, response_model=Category)
 
 
-@r.put(BASE + '/{id: int}')
+@r.put(BASE + '/{id}')
 async def update_category(
     id: int,
     upd_category: UpdCategory,
@@ -50,7 +50,7 @@ async def update_category(
     return await category_srvc.update_one(id, upd_category)
 
 
-@r.delete(BASE + '/{id: int}')
+@r.delete(BASE + '/{id}')
 async def delete_category(
     id: int,
     category_srvc: ServiceDepends
