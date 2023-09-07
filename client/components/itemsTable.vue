@@ -12,7 +12,7 @@
       hide-header
     >
       <template v-slot:top-right>
-        <q-input  v-model="filter" placeholder="Search">
+        <q-input  v-model="filter" placeholder="Поиск">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
