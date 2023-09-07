@@ -21,31 +21,32 @@ class SQLAlchemyRepository:
         async with async_session() as session:
             parent = self.model(**parent_data)
             session.add(parent)
+            await session.commit()
             for relation in relations:
                 for relation_fld, data in relation.items():
                     try:
-                        col = getattr(parent, relation_fld)
-                        assert isinstance(col, list)
+                        # col = getattr(parent, relation_fld)
+                        # assert isinstance(col, list)
                         annotated: dict = data['meta']
                         
-                        for child in data['children']:
-                            child = annotated['model'](**child)
-                            session.add(child)
-                            await session.commit()
+                        for child_id in data['children']:
+                            # child = annotated['model'](**child)
+                            # session.add(child)
+                            # await session.commit()
                             session.add(
                                 annotated['associate'](
                                     **{
                                         annotated['parent_fk']: parent.id,
-                                        annotated['child_fk']: child.id,
+                                        annotated['child_fk']: child_id,
                                     }
                                 )
                             )
                     except KeyError:
                         logger.error('m2m key err')
+                        await session.rollback()
                     except AttributeError:
                         logger.error('m2m attr err')
-                    except AssertionError:
-                        logger.error('m2m unexpected type err')
+                        await session.rollback()
 
             await session.commit()
             return parent.id

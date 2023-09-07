@@ -41,8 +41,8 @@ class Category(AddCategory):
 
 class AddStorageItem(BaseModel):
     name: str
-    categories: Annotated[list[AddCategory], dict(
-        associate=StorageItemsCategories, model=Categories,
+    categories: Annotated[list[int], dict(
+        associate=StorageItemsCategories,
         parent_fk='storage_item_id', child_fk='category_id'
     )]
 
@@ -58,3 +58,11 @@ class StorageItem(AddStorageItem):
     time_created: datetime
     time_updated: datetime
     categories: list[Category]
+
+
+class StorageItemFilter(BaseModel):
+    model_config = ConfigDict(relation_prefix={
+        '_': StorageItemsCategories, 'category': Categories
+    })
+
+    category__id__in: list[int] | None = Field(Query(default=[]))

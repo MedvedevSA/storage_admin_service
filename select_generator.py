@@ -108,6 +108,7 @@ class SelectGenerator:
     def get_stmt(self) -> Select:
         self.join_relations()
         self.stmt = self.stmt.where(*self.where_from_params())
+        self.stmt = self.stmt.distinct(self.model.id)
         self.adjust_paging_sorting()
         self.adjust_order_by()
         return self.stmt
