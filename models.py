@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, func, ForeignKey
+from sqlalchemy import TIMESTAMP, func, ForeignKey, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.exc import ProgrammingError
 
 from database import Base, engine
 
@@ -55,7 +56,12 @@ class Categories(Base):
     )
 
 
-async def init_models():
+async def chech_or_init_db(clean_db=False):
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
+        if clean_db:
+            await conn.run_sync(Base.metadata.drop_all)
+        try:
+            await conn.execute(select(Categories).limit(1))
+        except ProgrammingError:
+            await conn.run_sync(Base.metadata.create_all)
+

@@ -1,12 +1,9 @@
-from pathlib import Path
-
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import FileResponse
 
 from config import settings
-from models import init_models
+from models import chech_or_init_db
 from utils import include_routes
 
 app = FastAPI()
@@ -25,11 +22,9 @@ app.add_middleware(
 )
 
 
-
-
 @app.on_event('startup')
 async def startup_event():
-    await init_models()
+    await chech_or_init_db()
 
 if __name__ == '__main__':
     uvicorn.run(
