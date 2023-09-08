@@ -3,7 +3,7 @@
     <p class="text-h5">
         Фильтры:
     </p>
-    <CategoryList v-model="categories"/>
+    <CategoryList v-model="categories" />
     <q-btn 
         @click="$emit('onApply', prepareFilters())"
         color="secondary"

@@ -38,8 +38,30 @@
         <div class="q-pa-xs">
           <q-card bordered flat class="flex">
             <q-list>
+              <q-card-section class="q-pa-sm row">
+              <q-btn-dropdown class="col">
+                  <q-btn
+                      round
+                      icon="edit"
+                      size="md"
+                      class="q-ma-sm bg-green-2"
+                      @click="editStorageItem = props.row"
+                  />
+                  <q-dialog v-model="editClicked">
+                    <StorageItemEdit :storage-item="editStorageItem"/>
+                  </q-dialog>
+                  <q-btn
+                      round
+                      icon="delete"
+                      size="md"
+                      class="q-ma-sm bg-red-3"
+                      @click="deleteStorageItem(props.row.id)"
+                  />
+              </q-btn-dropdown>
+              </q-card-section>
               <q-item v-for="col in props.cols" :key="col.name">
                 <q-item-section class="row" :class="col.meta ? 'meta':'text-subtitle1' ">
+
                   <q-item-label caption class="text-caption col">
                     {{ col.label }}
                   </q-item-label>
@@ -81,6 +103,27 @@ const pagination = ref({
   rowsPerPage: 15
 })
 
+const editStorageItem = ref(null)
+const editClicked = computed({
+  get() {
+    return Boolean(editStorageItem.value);
+  },
+  set(newVal) {
+    window.location.reload();
+    editStorageItem.value = null;
+  },
+});
+
+function deleteStorageItem(id) {
+  apiFetch("/storage_items/" + id, {
+    method: "DELETE",
+  }).then((response) => {
+    response.json().then((data) => {
+      console.log("storage item id:", id, " deleted");
+    });
+  });
+  window.location.reload();
+}
 </script>
 
 <style scoped>

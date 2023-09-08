@@ -50,7 +50,7 @@ async def update_storage_item(
     upd_item: UpdStorageItem,
     storage_items_srvc: ServiceDepends
 ) -> int | None:
-    return await storage_items_srvc.update_one(id, upd_item)
+    return await storage_items_srvc.update_one_m2m(id, upd_item)
 
 
 @r.delete(BASE + '/{id}')

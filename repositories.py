@@ -25,14 +25,9 @@ class SQLAlchemyRepository:
             for relation in relations:
                 for relation_fld, data in relation.items():
                     try:
-                        # col = getattr(parent, relation_fld)
-                        # assert isinstance(col, list)
                         annotated: dict = data['meta']
                         
                         for child_id in data['children']:
-                            # child = annotated['model'](**child)
-                            # session.add(child)
-                            # await session.commit()
                             session.add(
                                 annotated['associate'](
                                     **{
@@ -50,6 +45,32 @@ class SQLAlchemyRepository:
 
             await session.commit()
             return parent.id
+
+    async def update_one_m2m(self, parent_id: Any, parent_data: dict, relations: list[dict]):
+        async with async_session() as session:
+            stmt = update(self.model).where(
+                self.model.id == parent_id
+            ).values(**parent_data).returning(self.model.id)
+            await session.execute(stmt)
+            await session.commit()
+            for data in relations:
+                annotated: dict = data['meta']
+                del_stmt = delete(annotated['associate']).where(
+                    getattr(annotated['associate'], annotated['parent_fk']) == parent_id
+                )
+                await session.execute(del_stmt)
+                
+                for child_id in data['children']:
+                    session.add(
+                        annotated['associate'](
+                            **{
+                                annotated['parent_fk']: parent_id,
+                                annotated['child_fk']: child_id,
+                            }
+                        )
+                    )
+            await session.commit()
+            return parent_id
 
     async def add_one(self, data: dict):
         async with async_session() as session:

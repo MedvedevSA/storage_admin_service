@@ -1,11 +1,8 @@
 <template>
-    <div class="column flex bg-indigo-1">
+    <div class="column flex bg-indigo-1 screen">
       <div class="flex row justify-center q-pa-sm q-mb-sm q-gutter-md text-h5 shadow-2 bg-indigo-2 shadow-3">
           <NuxtLink to="/" class="">
             Хранение
-          </NuxtLink>
-          <NuxtLink to="/categories" class="n-link-base">
-            Категории
           </NuxtLink>
           <NuxtLink to="/journal" class="n-link-base">
             Журнал
@@ -18,3 +15,9 @@
       </div>
     </div>
 </template>
+
+<style scoped>
+.screen{
+  min-height: 100vh;
+}
+</style>

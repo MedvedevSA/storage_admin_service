@@ -9,6 +9,7 @@
             size="md"
             icon="add"
             @click="createClicked = true"
+            v-if="! props.editDisabled"
           />
           <q-dialog v-model="createClicked">
             <CategoryNew />
@@ -27,7 +28,7 @@
           :val="category.id"
           :label="category.name"
         />
-        <q-btn-dropdown>
+        <q-btn-dropdown v-if="! props.editDisabled">
             <q-btn
                 round
                 icon="edit"
@@ -68,7 +69,7 @@ const editClicked = computed({
   },
 });
 
-const props = defineProps(['modelValue'])
+const props = defineProps(['modelValue', 'editDisabled'])
 const emit = defineEmits(['update:modelValue'])
 
 const selectedCategories = computed({
