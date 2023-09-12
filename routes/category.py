@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from repositories import CategoriesRepository
-from schemas import AddCategory, UpdCategory, Category
+from schemas import AddCategory, UpdCategory, BaseCategory
 from services import BaseService
 from utils import module_url
 
@@ -29,16 +29,16 @@ async def add_category(
 @r.get(BASE)
 async def get_categories(
     category_srvc: ServiceDepends
-) -> list[Category]:
-    return await category_srvc.get_all(response_model=Category)
+) -> list[BaseCategory]:
+    return await category_srvc.get_all(response_model=BaseCategory)
 
 
 @r.get(BASE + '/{id}')
 async def get_category(
     id: int,
     category_srvc: ServiceDepends
-) -> Category | None:
-    return await category_srvc.get_one(id, response_model=Category)
+) -> BaseCategory | None:
+    return await category_srvc.get_one(id, response_model=BaseCategory)
 
 
 @r.put(BASE + '/{id}')

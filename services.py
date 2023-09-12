@@ -53,7 +53,7 @@ class BaseService:
     ) -> ResponseModel | None:
         row = await self.repository.get_one(id)
         if row:
-            return response_model.model_validate(row)
+            return response_model.model_validate(row, from_attributes=True)
 
     async def get_all(
             self,

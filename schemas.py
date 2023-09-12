@@ -1,10 +1,9 @@
-from typing import Annotated
+from typing import Annotated, Literal
 from datetime import datetime
-from typing import Literal
 
 from fastapi import Query
 from pydantic import BaseModel, computed_field, ConfigDict, Field
-from models import Categories, StorageItemsCategories
+from models import Category, StorageItemCategory, ItemTypes
 
 
 class SortingModel(BaseModel):
@@ -31,7 +30,7 @@ class UpdCategory(AddCategory):
     ...
 
 
-class Category(AddCategory):
+class BaseCategory(AddCategory):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -42,7 +41,7 @@ class Category(AddCategory):
 class AddStorageItem(BaseModel):
     name: str
     categories: Annotated[list[int], dict(
-        associate=StorageItemsCategories,
+        associate=StorageItemCategory,
         parent_fk='storage_item_id', child_fk='category_id'
     )]
 
@@ -51,21 +50,34 @@ class UpdStorageItem(AddStorageItem):
     ...
 
 
-class StorageItem(AddStorageItem):
+class UpdItemField(BaseModel):
+    name: str
+
+
+class AddItemField(UpdItemField):
+    type: ItemTypes
+
+
+class BaseItemField(AddItemField):
+    id: int
+
+
+class BaseStorageItem(AddStorageItem):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     time_created: datetime
     time_updated: datetime
-    categories: list[Category]
+    categories: list[BaseCategory]
 
 
 class StorageItemFilter(BaseModel):
     model_config = ConfigDict(relation_prefix={
-        '_': StorageItemsCategories, 'category': Categories
+        '_': StorageItemCategory, 'category': Category
     })
 
     category__id__in: list[int] | None = Field(Query(default=[]))
+    name__ilike: str | None = Query(default=None)
 
 
 class JournalLog(BaseModel):
